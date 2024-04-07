@@ -1,9 +1,12 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.9
 
 import PackageDescription
 
 let package = Package(
     name: "PythonKit",
+    platforms: [
+        .macOS(.v12)
+    ],
     products: [
         .library(
             name: "PythonKit",

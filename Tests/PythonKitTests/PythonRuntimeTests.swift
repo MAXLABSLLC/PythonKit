@@ -194,7 +194,7 @@ class PythonRuntimeTests: XCTestCase {
                 XCTFail("non-Python error: \($0)")
                 return
             }
-            XCTAssertEqual(pythonError, PythonError.exception("division by zero", traceback: nil))
+            XCTAssertEqual(pythonError.description, PythonError.exception("division by zero", traceback: nil).description)
         }
     }
     

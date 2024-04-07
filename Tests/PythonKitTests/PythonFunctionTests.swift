@@ -205,20 +205,20 @@ class PythonFunctionTests: XCTestCase {
         // Example of function with no named parameters, which can be stated
         // ergonomically using an underscore. The ignored input is a [PythonObject].
         let testFunction = PythonFunction { _ in
-            throw HelloWorldException("EXAMPLE ERROR MESSAGE", 2)
+            throw HelloException("EXAMPLE ERROR MESSAGE")
         }.pythonObject
         
         do {
             try testFunction.throwing.dynamicallyCall(withArguments: [])
             XCTFail("testFunction did not throw an error.")
         } catch PythonError.exception(let error, _) {
-            guard let description = String(error) else {
+            guard let description = String(Python.str(error)) else {
                 XCTFail("A string could not be created from a HelloWorldException.")
                 return
             }
             
             XCTAssertTrue(description.contains("EXAMPLE ERROR MESSAGE"))
-            XCTAssertTrue(description.contains("HelloWorldException"))
+            XCTAssertTrue(description.contains("HelloException"))
         } catch {
             XCTFail("Got error that was not a Python exception: \(error.localizedDescription)")
         }
