@@ -51,11 +51,26 @@ let PyImport_ImportModule: @convention(c) (
     PyCCharPointer) -> PyObjectPointer? =
     PythonLibrary.loadSymbol(name: "PyImport_ImportModule")
 
+let PyImport_AddModule: @convention(c) (
+    PyCCharPointer) -> PyObjectPointer =
+    PythonLibrary.loadSymbol(name: "PyImport_AddModule")
+
 let PyEval_GetBuiltins: @convention(c) () -> PyObjectPointer =
     PythonLibrary.loadSymbol(name: "PyEval_GetBuiltins")
 
 let PyRun_SimpleString: @convention(c) (PyCCharPointer) -> Void =
     PythonLibrary.loadSymbol(name: "PyRun_SimpleString")
+
+let Py_CompileString: @convention(c) (PyCCharPointer, PyCCharPointer, Int) -> PyObjectPointer =
+    PythonLibrary.loadSymbol(name: "Py_CompileString")
+
+let PyEval_EvalCode: @convention(c) (PyObjectPointer, PyObjectPointer, PyObjectPointer) -> PyObjectPointer =
+    PythonLibrary.loadSymbol(name: "PyEval_EvalCode")
+
+let Py_file_input: Int = 257
+
+let PyModule_GetDict: @convention(c) (PyObjectPointer) -> PyObjectPointer? =
+    PythonLibrary.loadSymbol(name: "PyModule_GetDict")
 
 let PyCFunction_NewEx: @convention(c) (PyMethodDefPointer, UnsafeMutableRawPointer, UnsafeMutableRawPointer?) -> PyObjectPointer =
     PythonLibrary.loadSymbol(name: "PyCFunction_NewEx")

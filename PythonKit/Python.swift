@@ -673,10 +673,15 @@ public let Python = PythonInterface()
 public struct PythonInterface {
     /// A dictionary of the Python builtins.
     public let builtins: PythonObject
-    
+    public let mainModule: PythonObject
+    public let globals: PythonObject
+
     init() {
         Py_Initialize()   // Initialize Python
         builtins = PythonObject(PyEval_GetBuiltins())
+        
+        mainModule = PythonObject(PyImport_AddModule("__main__"))
+        globals = PythonObject(PyModule_GetDict(mainModule.ownedPyObject)!)
         
         // Runtime Fixes:
         PyRun_SimpleString("""
@@ -704,6 +709,16 @@ public struct PythonInterface {
     
     public func `import`(_ name: String) -> PythonObject {
         return try! attemptImport(name)
+    }
+    
+    public func eval(_ string: String) {
+        PyRun_SimpleString(string)
+    }
+    
+    public func eval(_ contents: String, filename: String, globals: PythonObject, locals: PythonObject) throws {
+        let start = Py_file_input
+        let compiled = Py_CompileString(contents, filename, start)
+        _ = PyEval_EvalCode(compiled, globals.ownedPyObject, locals.ownedPyObject)
     }
     
     public subscript(dynamicMember name: String) -> PythonObject {

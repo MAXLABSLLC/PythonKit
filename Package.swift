@@ -20,7 +20,10 @@ let package = Package(
         ),
         .testTarget(
             name: "PythonKitTests",
-            dependencies: ["PythonKit"]
+            dependencies: ["PythonKit"],
+            resources: [
+                .copy("test.py")
+            ]
         ),
     ]
 )
