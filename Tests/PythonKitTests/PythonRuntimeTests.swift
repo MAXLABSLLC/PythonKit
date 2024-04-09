@@ -405,4 +405,20 @@ class PythonRuntimeTests: XCTestCase {
         XCTAssertThrowsError(try Python.eval(contents, filename: "test.py", globals: globals, locals: locals.pythonObject))
     }
 
+    func testCreateModule() throws {
+        let module = try Python.createModule("mymodule", definitions: [
+            "foo": 3,
+            "bar": PythonFunction { args in
+                let lhs = args[0]
+                let rhs = args[1]
+                return lhs + rhs
+            }.pythonObject,
+            "mystr": "String"
+        ])
+        try Python.eval("import mymodule\ntestvalue = mymodule.foo\ncomputedvalue = mymodule.bar(2, 3)\nmystr = mymodule.mystr")
+        XCTAssertEqual(Python.globals["testvalue"], 3)
+        XCTAssertEqual(Python.globals["computedvalue"], 5)
+        XCTAssertEqual(Python.globals["mystr"], "String")
+    }
+
 }

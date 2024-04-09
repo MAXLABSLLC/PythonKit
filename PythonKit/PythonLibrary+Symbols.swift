@@ -52,8 +52,11 @@ let PyImport_ImportModule: @convention(c) (
     PythonLibrary.loadSymbol(name: "PyImport_ImportModule")
 
 let PyImport_AddModule: @convention(c) (
-    PyCCharPointer) -> PyObjectPointer =
+    PyCCharPointer) -> PyObjectPointer? =
     PythonLibrary.loadSymbol(name: "PyImport_AddModule")
+
+let PyImport_GetModuleDict: @convention(c) () -> PyObjectPointer =
+    PythonLibrary.loadSymbol(name: "PyImport_GetModuleDict")
 
 let PyEval_GetBuiltins: @convention(c) () -> PyObjectPointer =
     PythonLibrary.loadSymbol(name: "PyEval_GetBuiltins")
@@ -68,6 +71,12 @@ let PyEval_EvalCode: @convention(c) (PyObjectPointer, PyObjectPointer, PyObjectP
     PythonLibrary.loadSymbol(name: "PyEval_EvalCode")
 
 let Py_file_input: Int = 257
+
+let PyModule_New: @convention(c) (PyCCharPointer) -> PyObjectPointer =
+    PythonLibrary.loadSymbol(name: "PyModule_New")
+
+let PyModule_AddObject: @convention(c) (PyObjectPointer, PyCCharPointer, PyObjectPointer) -> Int =
+    PythonLibrary.loadSymbol(name: "PyModule_AddObject")
 
 let PyModule_GetDict: @convention(c) (PyObjectPointer) -> PyObjectPointer? =
     PythonLibrary.loadSymbol(name: "PyModule_GetDict")
@@ -123,6 +132,10 @@ let PyObject_GetItem: @convention(c) (
 let PyObject_SetItem: @convention(c) (
     PyObjectPointer, PyObjectPointer, PyObjectPointer) -> Void =
     PythonLibrary.loadSymbol(name: "PyObject_SetItem")
+
+let PyDict_SetItemString: @convention(c) (
+    PyObjectPointer, PyCCharPointer, PyObjectPointer) -> Void =
+    PythonLibrary.loadSymbol(name: "PyDict_SetItemString")
 
 let PyObject_DelItem: @convention(c) (
     PyObjectPointer, PyObjectPointer) -> Void =

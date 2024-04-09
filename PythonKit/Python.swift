@@ -124,7 +124,7 @@ extension PythonObject : CustomStringConvertible {
         // it for printing descriptions.
         // `repr` is not used because it is not designed to be readable and takes
         // too long for large objects.
-        return String(Python.str(self))!
+        return String(Python.str(self)) ?? ""
     }
 }
 
@@ -680,7 +680,7 @@ public struct PythonInterface {
         Py_Initialize()   // Initialize Python
         builtins = PythonObject(PyEval_GetBuiltins())
         
-        mainModule = PythonObject(PyImport_AddModule("__main__"))
+        mainModule = PythonObject(PyImport_AddModule("__main__")!)
         globals = PythonObject(PyModule_GetDict(mainModule.ownedPyObject)!)
         
         // Runtime Fixes:
@@ -713,7 +713,7 @@ public struct PythonInterface {
     
     public func eval(_ string: String) throws {
         guard PyRun_SimpleString(string) == 0 else {
-            throw PythonError.invalidModule("")
+            throw PythonError.invalidModule("__main__")
         }
         try throwPythonErrorIfPresent()
     }
@@ -723,6 +723,24 @@ public struct PythonInterface {
         let compiled = Py_CompileString(contents, filename, start)
         _ = PyEval_EvalCode(compiled, globals.ownedPyObject, locals.ownedPyObject)
         try throwPythonErrorIfPresent()
+    }
+    
+    public func createModule(_ name: String, definitions: [String: PythonObject]) throws -> PythonObject {
+        let moduleRef = PyModule_New(name)
+        guard  PyModule_AddStringConstant(moduleRef, "__file__", "(built-in)") == 0 else {
+            try throwPythonErrorIfPresent()
+            throw PythonError.invalidModule(name)
+        }
+        for (key, value) in definitions {
+            guard PyModule_AddObject(moduleRef, key, value.ownedPyObject) == 0 else {
+                try throwPythonErrorIfPresent()
+                throw PythonError.invalidModule(name)
+            }
+        }
+        
+        let sys_modules = PyImport_GetModuleDict()
+        PyDict_SetItemString(sys_modules, name, moduleRef)
+        return PythonObject(moduleRef)
     }
     
     public subscript(dynamicMember name: String) -> PythonObject {
