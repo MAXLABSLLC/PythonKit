@@ -725,6 +725,7 @@ public struct PythonInterface {
         try throwPythonErrorIfPresent()
     }
     
+    @discardableResult
     public func createModule(_ name: String, definitions: [String: PythonObject]) throws -> PythonObject {
         let moduleRef = PyModule_New(name)
         guard  PyModule_AddStringConstant(moduleRef, "__file__", "(built-in)") == 0 else {

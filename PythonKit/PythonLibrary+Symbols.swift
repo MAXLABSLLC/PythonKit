@@ -78,6 +78,9 @@ let PyModule_New: @convention(c) (PyCCharPointer) -> PyObjectPointer =
 let PyModule_AddObject: @convention(c) (PyObjectPointer, PyCCharPointer, PyObjectPointer) -> Int =
     PythonLibrary.loadSymbol(name: "PyModule_AddObject")
 
+let PyModule_AddStringConstant: @convention(c) (PyObjectPointer, PyCCharPointer, PyCCharPointer) -> Int =
+    PythonLibrary.loadSymbol(name: "PyModule_AddStringConstant")
+
 let PyModule_GetDict: @convention(c) (PyObjectPointer) -> PyObjectPointer? =
     PythonLibrary.loadSymbol(name: "PyModule_GetDict")
 

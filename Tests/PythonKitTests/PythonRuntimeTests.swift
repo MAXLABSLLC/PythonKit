@@ -406,7 +406,7 @@ class PythonRuntimeTests: XCTestCase {
     }
 
     func testCreateModule() throws {
-        let module = try Python.createModule("mymodule", definitions: [
+        try Python.createModule("mymodule", definitions: [
             "foo": 3,
             "bar": PythonFunction { args in
                 let lhs = args[0]
