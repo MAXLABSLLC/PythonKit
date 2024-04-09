@@ -684,7 +684,7 @@ public struct PythonInterface {
         globals = PythonObject(PyModule_GetDict(mainModule.ownedPyObject)!)
         
         // Runtime Fixes:
-        PyRun_SimpleString("""
+        _ = PyRun_SimpleString("""
             import sys
             import os
             
@@ -711,14 +711,18 @@ public struct PythonInterface {
         return try! attemptImport(name)
     }
     
-    public func eval(_ string: String) {
-        PyRun_SimpleString(string)
+    public func eval(_ string: String) throws {
+        guard PyRun_SimpleString(string) == 0 else {
+            throw PythonError.invalidModule("")
+        }
+        try throwPythonErrorIfPresent()
     }
     
     public func eval(_ contents: String, filename: String, globals: PythonObject, locals: PythonObject) throws {
         let start = Py_file_input
         let compiled = Py_CompileString(contents, filename, start)
         _ = PyEval_EvalCode(compiled, globals.ownedPyObject, locals.ownedPyObject)
+        try throwPythonErrorIfPresent()
     }
     
     public subscript(dynamicMember name: String) -> PythonObject {

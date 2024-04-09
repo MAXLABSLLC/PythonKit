@@ -381,18 +381,28 @@ class PythonRuntimeTests: XCTestCase {
         }
     }
     
-    func testEvalSimpleString() {
-        Python.eval("testvalue = 1")
+    func testEvalSimpleString() throws {
+        try Python.eval("testvalue = 1")
         XCTAssertEqual(Python.globals["testvalue"], 1)
     }
-    
+
+    func testEvalThrows() throws {
+        XCTAssertThrowsError(try Python.eval("testvalue 1"))
+    }
+
     func testRunFile() throws {
         let globals = Python.globals
-        let bundle = Bundle(path: Bundle(for: type(of: self)).paths(forResourcesOfType: "bundle", inDirectory: nil).first!)!
-        let contents = try String(contentsOfFile: bundle.path(forResource: "test", ofType: "py")!)
+        let contents = "filevalue = 2\n"
         let locals = Python.dict()
         try Python.eval(contents, filename: "test.py", globals: globals, locals: locals.pythonObject)
         XCTAssertEqual(locals["filevalue"], 2)
+    }
+
+    func testRunFileThrows() throws {
+        let globals = Python.globals
+        let contents = "filevalue = 2/0\n"
+        let locals = Python.dict()
+        XCTAssertThrowsError(try Python.eval(contents, filename: "test.py", globals: globals, locals: locals.pythonObject))
     }
 
 }
