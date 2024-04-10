@@ -420,5 +420,28 @@ class PythonRuntimeTests: XCTestCase {
         XCTAssertEqual(Python.globals["computedvalue"], 5)
         XCTAssertEqual(Python.globals["mystr"], "String")
     }
+    
+    func testCapsule() throws {
+        var object: PythonRuntimeTests? = PythonRuntimeTests()
+        weak var weakObject = object
+        
+        Python.globals["testcapsule"] = PythonCapsule(value: object!).pythonObject
+        object = nil
+        XCTAssertNotNil(weakObject)
+        
+        let capsule = Python.globals["testcapsule"].pythonCapsule
+        XCTAssertNotNil(capsule)
+    }
+
+    func testCapsuleDealloc() throws {
+        var object: PythonRuntimeTests? = PythonRuntimeTests()
+        weak var weakObject = object
+        
+        var capsule: PythonObject? = PythonCapsule(value: object!).pythonObject
+        XCTAssertNotNil(capsule)
+        object = nil
+        capsule = nil
+        XCTAssertNil(weakObject)
+    }
 
 }

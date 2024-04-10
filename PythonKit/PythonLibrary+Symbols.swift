@@ -95,12 +95,15 @@ let PyInstanceMethod_New: @convention(c) (PyObjectPointer) -> PyObjectPointer =
 /// static typing was removed. The caller must now manually cast a closure to
 /// `OpaquePointer` before passing it into `PyCapsule_New`.
 let PyCapsule_New: @convention(c) (
-    UnsafeMutableRawPointer, UnsafePointer<CChar>?,
+    UnsafeMutableRawPointer, PyCCharPointer?,
     OpaquePointer) -> PyObjectPointer =
     PythonLibrary.loadSymbol(name: "PyCapsule_New")
 
-let PyCapsule_GetPointer: @convention(c) (PyObjectPointer?, UnsafePointer<CChar>?) -> UnsafeMutableRawPointer =
+let PyCapsule_GetPointer: @convention(c) (PyObjectPointer?, PyCCharPointer?) -> UnsafeMutableRawPointer =
     PythonLibrary.loadSymbol(name: "PyCapsule_GetPointer")
+
+let PyCapsule_IsValid: @convention(c) (PyObjectPointer, PyCCharPointer?) -> Int =
+    PythonLibrary.loadSymbol(name: "PyCapsule_IsValid")
 
 let PyErr_SetString: @convention(c) (PyObjectPointer, UnsafePointer<CChar>?) -> Void =
     PythonLibrary.loadSymbol(name: "PyErr_SetString")

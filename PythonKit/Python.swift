@@ -1969,3 +1969,38 @@ extension PythonClass : PythonConvertible {
         typeObject
     }
 }
+
+public class PythonCapsule {
+    
+    public var value: AnyObject?
+    
+    public init(value: AnyObject?) {
+        self.value = value
+    }
+}
+
+extension PythonObject {
+    
+    public var pythonCapsule: PythonCapsule? {
+        guard PyCapsule_IsValid(self.borrowedPyObject, nil) != 0 else { return nil }
+        let selfPointer = PyCapsule_GetPointer(self.borrowedPyObject, nil)
+        return Unmanaged<PythonCapsule>.fromOpaque(selfPointer).takeRetainedValue()
+    }
+}
+
+extension PythonCapsule : PythonConvertible {
+    public var pythonObject: PythonObject {
+        let destructor: @convention(c) (PyObjectPointer?) -> Void = { capsulePointer in
+            let selfCapsule = PyCapsule_GetPointer(capsulePointer, nil)
+            Unmanaged<PythonCapsule>.fromOpaque(selfCapsule).release()
+        }
+        let selfPointer = Unmanaged.passRetained(self).toOpaque()
+        let capsulePointer = PyCapsule_New(
+            selfPointer,
+            nil,
+            unsafeBitCast(destructor, to: OpaquePointer.self)
+        )
+        return PythonObject(consuming: capsulePointer)
+
+    }
+}
