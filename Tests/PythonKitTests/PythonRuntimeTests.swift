@@ -431,6 +431,7 @@ class PythonRuntimeTests: XCTestCase {
         
         let capsule = Python.globals["testcapsule"].pythonCapsule
         XCTAssertNotNil(capsule)
+        XCTAssertNotNil(Python.globals["testcapsule"].pythonCapsule)
     }
 
     func testCapsuleDealloc() throws {
@@ -462,6 +463,6 @@ class PythonRuntimeTests: XCTestCase {
         XCTAssertEqual(Int(pydatetime.microsecond), datecomp.nanosecond! / 1_000)
         
         let convertedDate = Date(pydatetime)
-        XCTAssertEqual(convertedDate, date)
+        XCTAssertEqual(convertedDate?.timeIntervalSinceReferenceDate, date.timeIntervalSinceReferenceDate)
     }
 }

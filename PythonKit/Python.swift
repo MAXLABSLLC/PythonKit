@@ -1984,7 +1984,7 @@ extension PythonObject {
     public var pythonCapsule: PythonCapsule? {
         guard PyCapsule_IsValid(self.borrowedPyObject, nil) != 0 else { return nil }
         let selfPointer = PyCapsule_GetPointer(self.borrowedPyObject, nil)
-        return Unmanaged<PythonCapsule>.fromOpaque(selfPointer).takeRetainedValue()
+        return Unmanaged<PythonCapsule>.fromOpaque(selfPointer).takeUnretainedValue()
     }
 }
 
