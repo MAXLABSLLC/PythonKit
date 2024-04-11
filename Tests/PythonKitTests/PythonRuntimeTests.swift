@@ -443,5 +443,25 @@ class PythonRuntimeTests: XCTestCase {
         capsule = nil
         XCTAssertNil(weakObject)
     }
+    
+    func testDate() throws {
+        let date = Date()
+        let pydatetime = date.pythonObject
+        
+        let datecomp = Calendar.current.dateComponents([
+            .calendar, .timeZone,
+            .year, .month, .day,
+            .hour, .minute, .second, .nanosecond], from: date)
 
+        XCTAssertEqual(Int(pydatetime.year), datecomp.year)
+        XCTAssertEqual(Int(pydatetime.month), datecomp.month)
+        XCTAssertEqual(Int(pydatetime.day), datecomp.day)
+        XCTAssertEqual(Int(pydatetime.hour), datecomp.hour)
+        XCTAssertEqual(Int(pydatetime.minute), datecomp.minute)
+        XCTAssertEqual(Int(pydatetime.second), datecomp.second)
+        XCTAssertEqual(Int(pydatetime.microsecond), datecomp.nanosecond! / 1_000)
+        
+        let convertedDate = Date(pydatetime)
+        XCTAssertEqual(convertedDate, date)
+    }
 }
