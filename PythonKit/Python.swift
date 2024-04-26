@@ -720,7 +720,9 @@ public struct PythonInterface {
     
     public func eval(_ contents: String, filename: String, globals: PythonObject, locals: PythonObject) throws {
         let start = Py_file_input
-        let compiled = Py_CompileString(contents, filename, start)
+        guard  let compiled = Py_CompileString(contents, filename, start) else {
+            throw PythonError.invalidModule("(eval)")
+        }
         _ = PyEval_EvalCode(compiled, globals.ownedPyObject, locals.ownedPyObject)
         try throwPythonErrorIfPresent()
     }

@@ -64,7 +64,7 @@ let PyEval_GetBuiltins: @convention(c) () -> PyObjectPointer =
 let PyRun_SimpleString: @convention(c) (PyCCharPointer) -> Int =
     PythonLibrary.loadSymbol(name: "PyRun_SimpleString")
 
-let Py_CompileString: @convention(c) (PyCCharPointer, PyCCharPointer, Int) -> PyObjectPointer =
+let Py_CompileString: @convention(c) (PyCCharPointer, PyCCharPointer, Int) -> PyObjectPointer? =
     PythonLibrary.loadSymbol(name: "Py_CompileString")
 
 let PyEval_EvalCode: @convention(c) (PyObjectPointer, PyObjectPointer, PyObjectPointer) -> PyObjectPointer =

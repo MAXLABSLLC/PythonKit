@@ -404,6 +404,14 @@ class PythonRuntimeTests: XCTestCase {
         let locals = Python.dict()
         XCTAssertThrowsError(try Python.eval(contents, filename: "test.py", globals: globals, locals: locals.pythonObject))
     }
+    
+    func testRunFileBadSyntax() throws {
+        let globals = Python.globals
+        let contents = "fil. eval. ue )(n"
+        let locals = Python.dict()
+        XCTAssertThrowsError(try Python.eval(contents, filename: "test.py", globals: globals, locals: locals.pythonObject))
+    }
+
 
     func testCreateModule() throws {
         try Python.createModule("mymodule", definitions: [
