@@ -221,6 +221,9 @@ public enum PythonError : Error, Equatable {
     
     /// A module import error.
     case invalidModule(String)
+
+    /// A syntax error.
+    case syntaxError(String)
 }
 
 extension PythonError : CustomStringConvertible {
@@ -240,6 +243,8 @@ extension PythonError : CustomStringConvertible {
             return "Invalid Python call: \(e)"
         case .invalidModule(let m):
             return "Invalid Python module: \(m)"
+        case .syntaxError(let m):
+            return "Syntax Error: \(m)"
         }
     }
 }
@@ -713,6 +718,7 @@ public struct PythonInterface {
     
     public func eval(_ string: String) throws {
         guard PyRun_SimpleString(string) == 0 else {
+            try throwPythonErrorIfPresent()
             throw PythonError.invalidModule("__main__")
         }
         try throwPythonErrorIfPresent()
@@ -721,7 +727,8 @@ public struct PythonInterface {
     public func eval(_ contents: String, filename: String, globals: PythonObject, locals: PythonObject) throws {
         let start = Py_file_input
         guard  let compiled = Py_CompileString(contents, filename, start) else {
-            throw PythonError.invalidModule("(eval)")
+            try throwPythonErrorIfPresent()
+            throw PythonError.syntaxError("(eval)")
         }
         _ = PyEval_EvalCode(compiled, globals.ownedPyObject, locals.ownedPyObject)
         try throwPythonErrorIfPresent()
