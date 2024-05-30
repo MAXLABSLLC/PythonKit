@@ -5,6 +5,7 @@ private let datetime = Python.import("datetime")
 extension Date: PythonConvertible, ConvertibleFromPython {
     
     public init?(_ pythonObject: PythonObject) {
+        guard Python.isinstance(pythonObject, datetime.datetime) == true else { return nil }
         let calendar = Calendar.current
         let compoments = DateComponents(
             calendar: calendar,
